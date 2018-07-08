@@ -80,4 +80,12 @@ public class Board {
         updateStatus();
         return 0;
     }
+
+    public List<Integer> getOPositions() {
+        return OPositions;
+    }
+
+    public List<Integer> getXPositions() {
+        return XPositions;
+    }
 }
