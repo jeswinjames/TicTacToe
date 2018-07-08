@@ -45,6 +45,7 @@ public class Board {
         }
     }
 
+
     private boolean check15(List<Integer> elementList) {
         int size = elementList.size();
         for (int i = 0; i < size; i++) {
