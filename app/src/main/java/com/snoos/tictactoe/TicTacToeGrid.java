@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.List;
@@ -25,9 +26,9 @@ public class TicTacToeGrid extends View {
 
     public TicTacToeGrid(Context context, @Nullable AttributeSet attrs) {
         super ( context, attrs );
-        gridpainter = new Paint (  );
+        gridpainter = new Paint();
         gridpainter.setColor(Color.GRAY);
-        gridpainter.setStrokeWidth ( LINE_THICKNESS );
+        gridpainter.setStrokeWidth(LINE_THICKNESS);
         gridpainter.setStyle(Paint.Style.STROKE);
         gamePainter = new Paint();
         gridpainter.setStrokeWidth(LINE_THICKNESS);
@@ -54,6 +55,7 @@ public class TicTacToeGrid extends View {
     @Override
     protected void onDraw(Canvas canvas){
     drawGrid(canvas);
+        drawXO(canvas);
     }
 
     private void drawGrid(Canvas canvas) {
@@ -68,9 +70,55 @@ public class TicTacToeGrid extends View {
         List<Integer> xList = board.getXPositions();
         List<Integer> oList = board.getOPositions();
 
+        for (int i : xList) {
+            drawX(canvas, i);
+        }
+
+        for (int i : oList) {
+            drawO(canvas, i);
+        }
+
+    }
+
+    private void drawX(Canvas canvas, int position) {
+        int row = position / 3;
+        int column = position % 3;
+        gamePainter.setColor(Color.RED);
+        int leftX = cell_width * column + LINE_THICKNESS;
+        int topY = cell_height * row + LINE_THICKNESS;
+        int rightX = cell_width * (column + 1) - LINE_THICKNESS;
+        int bottomY = cell_height * (row + 1) - LINE_THICKNESS;
+        canvas.drawLine(leftX, topY,
+                rightX, bottomY, gamePainter);
+        canvas.drawLine(rightX, topY,
+                leftX, bottomY, gamePainter);
+    }
+
+    private void drawO(Canvas canvas, int position) {
+        int column, row;
+        row = position / 3;
+        column = position % 3;
+        int cx, cy;
+        cx = column * cell_width + cell_width / 2;
+        cy = row * cell_width + cell_width / 2;
+        canvas.drawCircle(cx, cy, cell_width / 2 - 30, gridpainter);
     }
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+
+            int position = (x / cell_width) * 3 + (y / cell_height);
+            board.touchedPosition(position);
+            invalidate();
+            return true;
+        }
+        return false;
     }
 }

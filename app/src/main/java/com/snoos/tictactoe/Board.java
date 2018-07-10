@@ -7,11 +7,24 @@ public class Board {
     private List<Integer> OPositions;
     private List<Integer> XPositions;
     private GameStatus currentStatus;
+    private XO currentPlayer = XO.X;
 
     private static final int[] MAGICSQUARE = {6, 1, 8, 7, 5, 3, 2, 9, 4};
 
+    public void touchedPosition(int position) {
+        put(position, currentPlayer);
+    }
+
     public enum XO{
-        X, O
+        X, O;
+
+        public XO toggle() {
+            if (this.equals(X)) {
+                return O;
+            } else {
+                return X;
+            }
+        }
     }
 
     public enum GameStatus{
@@ -66,7 +79,7 @@ public class Board {
         return false;
     }
 
-    public int put(int position, XO value){
+    private int put(int position, XO value) {
         if(XPositions.contains (position)|| OPositions.contains ( position))
             return -1;
 
@@ -77,6 +90,7 @@ public class Board {
             OPositions.add (position);
         }
 
+        currentPlayer = currentPlayer.toggle();
         updateStatus();
         return 0;
     }
